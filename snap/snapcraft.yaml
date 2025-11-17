@@ -22,6 +22,8 @@ apps:
       - network           # Optional: some runners fetch data/plugins
     environment:
       LD_LIBRARY_PATH: "/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH"
+  list-tests:
+    command: list_tests
 
 parts:
   test-conformance:
@@ -30,6 +32,12 @@ parts:
     stage:
       - test
 
+  list-tests:
+    source: bin/
+    plugin: dump
+    stage:
+      - list_tests
+
   opencl-cts:
     plugin: nil
     source: https://github.com/KhronosGroup/OpenCL-CTS.git
@@ -37,6 +45,7 @@ parts:
     source-type: git
     after:
       - test-conformance
+      - list-tests
     build-packages:
       - build-essential
       - cmake
@@ -57,6 +66,7 @@ parts:
       craftctl default
       mkdir "${CRAFT_PART_INSTALL}/usr/bin"
       cp "${CRAFT_PROJECT_DIR}/bin/test" "${CRAFT_PART_INSTALL}/usr/bin/test"
+      cp "${CRAFT_PROJECT_DIR}/bin/list_tests" "${CRAFT_PART_INSTALL}/usr/bin/list_tests"
 
       mkdir -p "${CRAFT_PART_INSTALL}/usr/bin/"
       cp -r "${SNAPCRAFT_PART_BUILD}/test_conformance" "${CRAFT_PART_INSTALL}/usr/bin/"
