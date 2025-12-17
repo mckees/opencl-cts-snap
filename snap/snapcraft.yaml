@@ -9,7 +9,7 @@ platforms:
     build-on: [amd64]
   arm64:
     build-on: [amd64, arm64]
-version: '2024-02-27-00'
+version: '2024-02-27-00-snap1'
 summary: Khronos OpenCL Conformance Test Suite
 description: |
   Baseline snap for the Khronos OpenCL CTS. Builds the test_conformance
@@ -37,8 +37,15 @@ parts:
   opencl-cts:
     plugin: nil
     source: https://github.com/KhronosGroup/OpenCL-CTS.git
-    source-branch: v$SNAPCRAFT_PROJECT_VERSION
     source-type: git
+    override-pull: |
+      set -eux
+      craftctl default
+
+      base_version="${SNAPCRAFT_PROJECT_VERSION%-snap*}"
+      cd "$SNAPCRAFT_PART_SRC"
+      git fetch --tags
+      git checkout "v${base_version}"
     build-attributes:
       - enable-patchelf
     build-packages:
